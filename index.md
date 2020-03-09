@@ -114,8 +114,9 @@ The following reasons speak for using these programs:
   [AWK](https://en.wikipedia.org/wiki/AWK),
   [MKDIR](https://en.wikipedia.org/wiki/Mkdir),
   [RMDIR](https://en.wikipedia.org/wiki/Rmdir),
-  [CP](https://en.wikipedia.org/wiki/Cp_(Unix)) and
-  [RM](https://en.wikipedia.org/wiki/Rm_(Unix)).
+  [CP](https://en.wikipedia.org/wiki/Cp_(Unix)),
+  [RM](https://en.wikipedia.org/wiki/Rm_(Unix)) and
+  [LN](https://en.wikipedia.org/wiki/Ln_(Unix)).
   They neither introduce new binary code to the system, nor do they open new ports,
   and are easily reviewable to ascertain that no malware/bloatware/spyware is contained.
   On Windows, however, [Cygwin](https://en.wikipedia.org/wiki/Cygwin) must be installed before.
