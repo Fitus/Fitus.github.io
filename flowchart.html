@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flowchart of internal processing within Zaloha.sh</title>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+a:visited {
+  color: #0366d6;
+}
+a:hover {
+  color: #0366d6;
+  text-decoration: underline;
+}
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+}
+canvas {
+  margin-bottom: 40px;
+}
+button {
+  padding: 10px;
+  margin-right: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Flowchart of internal processing within Zaloha.sh</h1>
+<h3>Purpose of and Data Flow among the files in the Metadata Directory of Zaloha</h3>
+<canvas id="canv" width="865" height="540"></canvas>
+<br>
+<button onclick="start_again()">Start again</button>
+<button onclick="prev_step()">Previous step</button>
+<button onclick="next_step()"><b>Next step</b></button>
+<p id="desc"></p>
+
+<script>
+  "use strict"
+  var canv = document.getElementById("canv")
+  var desc = document.getElementById("desc")
+  var ctx = canv.getContext("2d")
+  var step = 0
+  var flash_timer = 0
+  var display_state = 0
+  // ----------------------
+  function descr( t ) {
+    if ( 0 != display_state ) {
+      t = t.replace( '<sourceDir>', '&lt;sourceDir&gt;' )
+      t = t.replace( '<backupDir>', '&lt;backupDir&gt;' )
+      t = t.replace( '<metaDir>', '&lt;metaDir&gt;' )
+      desc.innerHTML = "<b>Step " + step + ": </b>" + t
+    }
+  }
+  // ----------------------
+  function arrow_path( x1, y1, x2, y2, ar ) {
+    ctx.beginPath()
+    ctx.moveTo( x1, y1 )
+    ctx.lineTo( x2, y2 )
+    if ( 1 == ar ) {
+      if ( x1 == x2 ) {
+        if ( y1 < y2 ) {
+          ctx.lineTo( x2 - 3, y2 - 5 )
+          ctx.moveTo( x2, y2 )
+          ctx.lineTo( x2 + 3, y2 - 5 )
+        } else {
+          ctx.lineTo( x2 - 3, y2 + 5 )
+          ctx.moveTo( x2, y2 )
+          ctx.lineTo( x2 + 3, y2 + 5 )
+        }
+      } else if ( y1 == y2 ) {
+        if ( x1 < x2 ) {
+          ctx.lineTo( x2 - 5, y2 - 3 )
+          ctx.moveTo( x2, y2 )
+          ctx.lineTo( x2 - 5, y2 + 3 )
+        } else {
+          ctx.lineTo( x2 + 5, y2 - 3 )
+          ctx.moveTo( x2, y2 )
+          ctx.lineTo( x2 + 5, y2 + 3 )
+        }
+      }
+    }
+    ctx.stroke()
+  }
+  function draw_arrow( m, x1, y1, x2, y2, ar ) {
+    if ( 0 == m ) {
+      ctx.lineWidth = 3
+      ctx.strokeStyle = "#FFFFFF"
+      arrow_path( x1, y1, x2, y2, ar )
+      ctx.lineWidth = 1
+      ctx.strokeStyle = "#666666"
+      arrow_path( x1, y1, x2, y2, ar )
+    } else {
+      ctx.lineWidth = 1
+      ctx.strokeStyle = "#000000"
+      arrow_path( x1, y1, x2, y2, ar )
+    }
+  }
+  function arrow( x1, y1, x2, y2 ) {
+    if ( 2 <= display_state ) {
+      draw_arrow( 1, x1, y1, x2, y2, 1 )
+    } else {
+      draw_arrow( 0, x1, y1, x2, y2, 1 )
+    }
+  }
+  function line( x1, y1, x2, y2 ) {
+    if ( 2 <= display_state ) {
+      draw_arrow( 1, x1, y1, x2, y2, 0 )
+    } else {
+      draw_arrow( 0, x1, y1, x2, y2, 0 )
+    }
+  }
+  // ----------------------
+  function draw_file( m, x, y, t ) {
+    ctx.lineWidth = 1
+    ctx.clearRect( x - 36, y - 1, 72, 32 )
+    if ( 0 == m ) {
+      ctx.strokeStyle = "#666666"
+    } else {
+      ctx.strokeStyle = "#000000"
+    }
+    ctx.strokeRect( x - 35, y, 70, 30 )
+    if ( 0 == m ) {
+      ctx.fillStyle = "#FFFFFF"
+    } else if ( 1 == m ) {
+      ctx.fillStyle = "#BBBBBB"
+    } else if ( 2 == m ) {
+      ctx.fillStyle = "#99FF99"
+    } else if ( 3 == m ) {
+      ctx.fillStyle = "#FF9999"
+    } else if ( 4 == m ) {
+      ctx.fillStyle = "#9999FF"
+    }
+    ctx.fillRect( x - 35, y, 70, 30 )
+    if ( 0 == m ) {
+      ctx.fillStyle = "#666666"
+    } else {
+      ctx.fillStyle = "#000000"
+    }
+    ctx.font = "14px Arial"
+    ctx.textAlign = "center"
+    ctx.fillText( t, x, y + 20 )
+  }
+  function file( x, y, t ) {
+    if ( 2 <= display_state ) {
+      draw_file( 1, x, y, t )
+    } else {
+      draw_file( 0, x, y, t )
+    }
+  }
+  function file_green( x, y, t ) {
+    if ( 2 == display_state ) {
+      draw_file( 2, x, y, t )
+    } else if ( 0 != display_state ) {
+      draw_file( 1, x, y, t )
+    }
+  }
+  function file_red( x, y, t ) {
+    if ( 2 == display_state ) {
+      draw_file( 3, x, y, t )
+    } else if ( 0 != display_state ) {
+      draw_file( 1, x, y, t )
+    }
+  }
+  function file_blue( x, y, t ) {
+    if ( 2 == display_state ) {
+      draw_file( 4, x, y, t )
+    } else if ( 0 != display_state ) {
+      draw_file( 1, x, y, t )
+    }
+  }
+  // ----------------------
+  var display = [
+    function() {
+      descr( "Create parameters file <code>000_parameters.csv</code> that contains the parameters under which Zaloha was invoked and internal variables." )
+      arrow( 45, 0, 45, 15 )
+      file( 45, 15, "000.csv" )
+    },
+    function() {
+      descr( "Create AWK preprocessor <code>100_awkpreproc.awk</code> for other AWK programs (allows use of constants like <code>NUMBERREGEX</code> to make the AWK heredocs easier to read)." )
+      arrow( 45, 55, 45, 70 )
+      file( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create AWK filter <code>102_xtrace2term.awk</code> for filtering of BASH execution traces for terminal output, with optional color handling." )
+      arrow( 140, 55, 140, 70 )
+      file( 140, 70, "102.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create AWK filter <code>104_actions2term.awk</code> for filtering of action lists for terminal output, with optional color handling." )
+      arrow( 235, 55, 235, 70 )
+      file( 235, 70, "104.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create AWK parser <code>106_parser.awk</code> for parsing of FIND operands and preparation of shellscripts for FIND." )
+      arrow( 330, 55, 330, 70 )
+      file( 330, 70, "106.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>200_find_lastrun.sh</code> for FIND on <code><metaDir>/999_mark_executed</code>, to obtain time of the last run of Zaloha." )
+      line( 320, 100, 320, 115 )
+      line( 320, 115, 45, 115 )
+      arrow( 45, 115, 45, 150 )
+      file( 45, 150, "200.sh" )
+      file_green( 330, 70, "106.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>210_find_source.sh</code> for FIND scan of <code><sourceDir></code>." )
+      line( 330, 100, 330, 125 )
+      line( 330, 125, 140, 125 )
+      arrow( 140, 125, 140, 150 )
+      file( 140, 150, "210.sh" )
+      file_green( 330, 70, "106.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>220_find_backup.sh</code> for FIND scan of <code><backupDir></code>." )
+      line( 340, 100, 340, 135 )
+      line( 340, 135, 235, 135 )
+      arrow( 235, 135, 235, 150 )
+      file( 235, 150, "220.sh" )
+      file_green( 330, 70, "106.awk" )
+    },
+    function() {
+      descr( "Execute FIND on <code><metaDir>/999_mark_executed</code>, to obtain time of the last run of Zaloha." )
+      arrow( 45, 180, 45, 205 )
+      file( 45, 205, "300.csv" )
+      file_red( 45, 150, "200.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Execute FIND scan of <code><sourceDir></code>." )
+      arrow( 140, 180, 140, 205 )
+      file( 140, 205, "310.csv" )
+      file_red( 140, 150, "210.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Execute FIND scan of <code><backupDir></code>." )
+      arrow( 235, 180, 235, 205 )
+      file( 235, 205, "320.csv" )
+      file_red( 235, 150, "220.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Create AWK cleaner <code>110_cleaner.awk</code> for escaping of tabs and newlines in paths by <code>///t</code> and <code>///n</code>." )
+      arrow( 425, 55, 425, 70 )
+      file( 425, 70, "110.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Clean <code>310_source_raw.csv</code> to <code>330_source_clean.csv</code> by AWK cleaner <code>110_cleaner.awk</code>." )
+      arrow( 140, 235, 140, 260 )
+      file( 140, 260, "330.csv" )
+      file_green( 425, 70, "110.awk" )
+    },
+    function() {
+      descr( "Clean <code>320_backup_raw.csv</code> to <code>340_backup_clean.csv</code> by AWK cleaner <code>110_cleaner.awk</code>." )
+      arrow( 235, 235, 235, 260 )
+      file( 235, 260, "340.csv" )
+      file_green( 425, 70, "110.awk" )
+    },
+    function() {
+      descr( "Create AWK checker <code>130_checker.awk</code> for sanity-checking of cleaned FIND data." )
+      arrow( 520, 55, 520, 70 )
+      file( 520, 70, "130.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Sanity-check <code>300_lastrun.csv</code> by AWK checker <code>130_checker.awk</code>." )
+      file_blue( 45, 205, "300.csv" )
+      file_green( 520, 70, "130.awk" )
+    },
+    function() {
+      descr( "Sanity-check <code>330_source_clean.csv</code> by AWK checker <code>130_checker.awk</code>." )
+      file_blue( 140, 260, "330.csv" )
+      file_green( 520, 70, "130.awk" )
+    },
+    function() {
+      descr( "Sanity-check <code>340_backup_clean.csv</code> by AWK checker <code>130_checker.awk</code>." )
+      file_blue( 235, 260, "340.csv" )
+      file_green( 520, 70, "130.awk" )
+    },
+    function() {
+      descr( "Create AWK program for hardlink detection <code>150_hlinks.awk</code>." )
+      arrow( 615, 55, 615, 70 )
+      file( 615, 70, "150.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Sort <code>330_source_clean.csv</code> by device numbers + inode numbers so that multiply-linked (hardlinked) files are in adjacent records (optional step)." )
+      arrow( 140, 290, 140, 315 )
+      file( 140, 315, "350.csv" )
+    },
+    function() {
+      descr( "Perform hardlink detection by <code>150_hlinks.awk</code> (optional step)." )
+      arrow( 140, 345, 140, 370 )
+      file( 140, 370, "360.csv" )
+      file_green( 615, 70, "150.awk" )
+    },
+    function() {
+      descr( "Create AWK program for differences processing <code>170_diff.awk</code>." )
+      arrow( 710, 55, 710, 70 )
+      file( 710, 70, "170.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Union <code>360_source_hlinks.csv</code> with <code>340_backup_clean.csv</code> and sort by file's paths, so that objects existing in both directories are in adjacent records." )
+      line( 140, 400, 140, 415 )
+      line( 140, 415, 177, 415 )
+      arrow( 177, 415, 177, 430 )
+      line( 235, 290, 235, 415 )
+      line( 235, 415, 187, 415 )
+      arrow( 187, 415, 187, 430 )
+      file( 182, 430, "370.csv" )
+    },
+    function() {
+      descr( "Perform differences processing by <code>170_diff.awk</code>." )
+      line( 45, 235, 45, 475 )
+      line( 45, 475, 109, 475 )
+      arrow( 109, 475, 109, 490 )
+      line( 182, 460, 182, 475 )
+      line( 182, 475, 119, 475 )
+      arrow( 119, 475, 119, 490 )
+      file( 114, 490, "380.csv" )
+      file_green( 710, 70, "170.awk" )
+    },
+    function() {
+      descr( "Create AWK program for differences post-processing and splitting off Exec1 and Exec4 actions <code>190_postproc.awk</code>." )
+      arrow( 805, 55, 805, 70 )
+      file( 805, 70, "190.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Reverse sort the differences result by file's paths (so that parent directories come after their children)." )
+      line( 114, 520, 114, 535 )
+      line( 114, 535, 270, 535 )
+      line( 270, 535, 270, 307 )
+      line( 270, 307, 295, 282 )
+      line( 295, 282, 295, 170 )
+      line( 295, 170, 425, 170 )
+      arrow( 425, 170, 425, 185 )
+      file( 425, 185, "390.csv" )
+    },
+    function() {
+      descr( "Post-process the differences result and split off Exec1 and Exec4 actions." )
+      line( 420, 215, 420, 230 )
+      line( 420, 230, 330, 230 )
+      arrow( 330, 230, 330, 300 )
+      file( 330, 300, "510.csv" )
+      line( 430, 215, 430, 230 )
+      line( 430, 230, 550, 230 )
+      line( 550, 230, 550, 285 )
+      line( 550, 285, 615, 285 )
+      arrow( 615, 285, 615, 300 )
+      file( 615, 300, "540.csv" )
+      arrow( 460, 200, 485, 200 )
+      file( 520, 185, "500.csv" )
+      file_green( 805, 70, "190.awk" )
+    },
+    function() {
+      descr( "Create AWK program for selection of Exec2 and Exec3 actions <code>405_select23.awk</code>." )
+      arrow( 425, 110, 425, 125 )
+      file( 425, 125, "405.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Sort <code>500_target_r.csv</code> by file's paths and split off Exec2 and Exec3 actions." )
+      line( 510, 215, 510, 257 )
+      line( 510, 257, 425, 257 )
+      arrow( 425, 257, 425, 300 )
+      file( 425, 300, "520.csv" )
+      arrow( 520, 215, 520, 300 )
+      file( 520, 300, "530.csv" )
+      arrow( 555, 200, 580, 200 )
+      file( 615, 185, "505.csv" )
+      file_green( 425, 125, "405.awk" )
+    },
+    function() {
+      descr( "Compare byte by byte files that appear identical (optional step)." )
+      arrow( 615, 215, 615, 240 )
+      file( 615, 240, "555.csv" )
+      line( 650, 205, 710, 205 )
+      arrow( 710, 205, 710, 300 )
+      file( 710, 300, "550.csv" )
+    },
+    function() {
+      descr( "Create AWK program <code>410_exec1.awk</code> for creation of shellscripts for Exec1 and Exec4." )
+      arrow( 520, 110, 520, 125 )
+      file( 520, 125, "410.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>610_exec1.sh</code> for Exec1." )
+      arrow( 330, 330, 330, 355 )
+      file( 330, 355, "610.sh" )
+      file_green( 520, 125, "410.awk" )
+    },
+    function() {
+      descr( "Create AWK program <code>420_exec2.awk</code> for creation of shellscripts for Exec2 and Exec5." )
+      arrow( 615, 110, 615, 125 )
+      file( 615, 125, "420.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>620_exec2.sh</code> for Exec2." )
+      arrow( 425, 330, 425, 355 )
+      file( 425, 355, "620.sh" )
+      file_green( 615, 125, "420.awk" )
+    },
+    function() {
+      descr( "Create AWK program <code>430_exec3.awk</code> for creation of shellscript for Exec3." )
+      arrow( 710, 110, 710, 125 )
+      file( 710, 125, "430.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>630_exec3.sh</code> for Exec3 (optional step)." )
+      arrow( 520, 330, 520, 355 )
+      file( 520, 355, "630.sh" )
+      file_green( 710, 125, "430.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>640_exec4.sh</code> for Exec4." )
+      arrow( 615, 330, 615, 355 )
+      file( 615, 355, "640.sh" )
+      file_green( 520, 125, "410.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>650_exec5.sh</code> for Exec5 (optional step)." )
+      arrow( 710, 330, 710, 355 )
+      file( 710, 355, "650.sh" )
+      file_green( 615, 125, "420.awk" )
+    },
+    function() {
+      descr( "Create AWK program <code>490_touch.awk</code> for creation of shellscript to touch file <code>999_mark_executed</code>." )
+      arrow( 805, 110, 805, 125 )
+      file( 805, 125, "490.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create shellscript <code>690_touch.sh</code> to touch file <code>999_mark_executed</code>." )
+      arrow( 805, 340, 805, 355 )
+      file( 805, 355, "690.sh" )
+      file_green( 805, 125, "490.awk" )
+    },
+    function() {
+      descr( "Create AWK program <code>700_restore.awk</code> for creation of shellscripts for the case of restore." )
+      arrow( 330, 415, 330, 430 )
+      file( 330, 430, "700.awk" )
+      file_green( 45, 70, "100.awk" )
+    },
+    function() {
+      descr( "Create shellscripts for the case of restore by AWK program <code>700_restore.awk</code>." )
+      arrow( 330, 475, 330, 490 )
+      file( 330, 490, "800.sh" )
+      arrow( 425, 475, 425, 460 )
+      file( 425, 430, "810.sh" )
+      arrow( 425, 475, 425, 490 )
+      file( 425, 490, "820.sh" )
+      arrow( 520, 475, 520, 460 )
+      file( 520, 430, "830.sh" )
+      arrow( 520, 475, 520, 490 )
+      file( 520, 490, "840.sh" )
+      arrow( 615, 475, 615, 460 )
+      file( 615, 430, "850.sh" )
+      arrow( 615, 475, 615, 490 )
+      file( 615, 490, "860.sh" )
+      line( 650, 195, 860, 195 )
+      line( 860, 195, 860, 475 )
+      line( 860, 475, 330, 475 )
+      file_green( 330, 430, "700.awk" )
+    },
+    function() {
+      descr( "Present Exec1 actions to the user and ask for confirmation." )
+      file_blue( 330, 300, "510.csv" )
+      file_green( 235, 70, "104.awk" )
+    },
+    function() {
+      descr( "If the user confirms, execute the Exec1 actions." )
+      file_red( 330, 355, "610.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Present Exec2 actions to the user and ask for confirmation." )
+      file_blue( 425, 300, "520.csv" )
+      file_green( 235, 70, "104.awk" )
+    },
+    function() {
+      descr( "If the user confirms, execute the Exec2 actions." )
+      file_red( 425, 355, "620.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Present Exec3 actions to the user and ask for confirmation (optional step)." )
+      file_blue( 520, 300, "530.csv" )
+      file_green( 235, 70, "104.awk" )
+    },
+    function() {
+      descr( "If the user confirms, execute the Exec3 actions (optional step)." )
+      file_red( 520, 355, "630.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Present Exec4 actions to the user and ask for confirmation." )
+      file_blue( 615, 300, "540.csv" )
+      file_green( 235, 70, "104.awk" )
+    },
+    function() {
+      descr( "If the user confirms, execute the Exec4 actions." )
+      file_red( 615, 355, "640.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Present Exec5 actions to the user and ask for confirmation (optional step)." )
+      file_blue( 710, 300, "550.csv" )
+      file_green( 235, 70, "104.awk" )
+    },
+    function() {
+      descr( "If the user confirms, execute the Exec5 actions (optional step)." )
+      file_red( 710, 355, "650.sh" )
+      file_green( 140, 70, "102.awk" )
+    },
+    function() {
+      descr( "Touch the file <code>999_mark_executed</code>." )
+      arrow( 805, 385, 805, 430 )
+      file( 805, 430, "999" )
+      file_red( 805, 355, "690.sh" )
+      file_blue( 45, 15, "000.csv" )
+    }
+  ]
+  // ----------------------
+  function start_flash() {
+    flash_timer = setInterval( flash, 300 )
+  }
+  function flash() {
+    if ( 1 == display_state ) {
+      display_state = 2
+    } else {
+      display_state = 1
+    }
+    display[ step - 1 ]()
+  }
+  function stop_flash() {
+    if ( 0 != flash_timer ) {
+      clearInterval( flash_timer )
+      flash_timer = 0
+    }
+  }
+  // ----------------------
+  function start_again() {
+    stop_flash()
+    display_state = 0
+    ctx.clearRect( 0, 0, canv.width, canv.height );
+    for ( step = 1; step <= display.length; step++ ) {
+      display[ step - 1 ]()
+    }
+    desc.innerHTML = "Press the Next step button to begin."
+    step = 0
+  }
+  function prev_step() {
+    stop_flash()
+    if (( 1 <= step ) && ( step <= display.length )) {
+      display_state = 1
+      display[ step - 1 ]()
+    }
+    if ( 1 < step ) {
+      step--
+      display_state = 1
+      display[ step - 1 ]()
+      start_flash()
+    } else {
+      desc.innerHTML = "Press the Next step button to begin."
+      step = 0
+    }
+  }
+  function next_step() {
+    stop_flash()
+    if (( 1 <= step ) && ( step <= display.length )) {
+      display_state = 3
+      display[ step - 1 ]()
+    }
+    if ( step < display.length ) {
+      step++
+      display_state = 2
+      display[ step - 1 ]()
+      start_flash()
+    } else {
+      desc.innerHTML = "Finished !"
+      step = display.length + 1
+    }
+  }
+  start_again()
+</script>
+<noscript>Sorry, your browser does not support JavaScript!</noscript>
+
+</body>
+</html>
