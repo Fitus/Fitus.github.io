@@ -73,8 +73,8 @@ encryption of data, automatic scheduling,
 special data transfer protocols and/or storage formats targeted at
 minimizing network traffic and/or storage media use and so on.
 
-This place hosts the [Zaloha.sh](https://github.com/Fitus/Zaloha.sh) synchronizer,
-along with [Zaloha_Snapshot.sh](https://github.com/Fitus/Zaloha_Snapshot.sh),
+This place hosts the [Zaloha2.sh](https://github.com/Fitus/Zaloha2.sh) synchronizer,
+along with [Zaloha2_Snapshot.sh](https://github.com/Fitus/Zaloha2_Snapshot.sh),
 an add-on script to create hardlink-based snapshots of the backup directory.
 
 The following reasons speak for using these programs:
@@ -88,27 +88,27 @@ The following reasons speak for using these programs:
 * The programs (as such) are safe in the sense that they never do potentially destructive
   actions without user's confirmation.
 
-* [Zaloha.sh](https://github.com/Fitus/Zaloha.sh) first analyses the directories
+* [Zaloha2.sh](https://github.com/Fitus/Zaloha2.sh) first analyses the directories
   and presents the prepared actions to the user for confirmation.
   Actions requiring more attention are displayed in red color (with <b>--color</b> option).
   Such human oversight is a good countermeasure against accidental mishaps
   on the source directory - the user might detect them at backup time.
 
-* [Zaloha.sh](https://github.com/Fitus/Zaloha.sh) is able to compare files byte by byte (<b>--byteByByte</b> option).
+* [Zaloha2.sh](https://github.com/Fitus/Zaloha2.sh) is able to compare the contents of files as well.
   Although this requires a **significantly** longer analysis phase (over the standard comparisons
   of just the file sizes and modification times), it should be used from time to time to ensure
   that the backup data is indeed readable and identical to source data.
 
-* Other features and modifiers exist, see the [online documentation of Zaloha.sh](https://github.com/Fitus/Zaloha.sh/blob/master/DOCUMENTATION.md).
+* Other features and modifiers exist, see the [online documentation of Zaloha2.sh](https://github.com/Fitus/Zaloha2.sh/blob/master/DOCUMENTATION.md).
 
-* [Zaloha_Snapshot.sh](https://github.com/Fitus/Zaloha_Snapshot.sh) creates snapshots of the backup directory.
+* [Zaloha2_Snapshot.sh](https://github.com/Fitus/Zaloha2_Snapshot.sh) creates snapshots of the backup directory.
   Snapshots are directories with contents of the backup directory fixated at the times when they have been created.
   The snapshots utilize hardlinks, which must be supported by the underlying filesystem type.
   The benefit is that unchanged files are physically stored only once, independently on how many snapshots exist.
-  For details, see the [online documentation of Zaloha_Snapshot.sh](https://github.com/Fitus/Zaloha_Snapshot.sh/blob/master/DOCUMENTATION.md).
+  For details, see the [online documentation of Zaloha2_Snapshot.sh](https://github.com/Fitus/Zaloha2_Snapshot.sh/blob/master/DOCUMENTATION.md).
 
 * Both programs are [BASH](https://en.wikipedia.org/wiki/Bash_(Unix_shell)) scripts that run on Linux/Unics natively,
-  and use only standard system commands
+  and use (in the Local Mode) only standard system commands
   [FIND](https://en.wikipedia.org/wiki/Find_(Unix)),
   [SORT](https://en.wikipedia.org/wiki/Sort_(Unix)),
   [AWK](https://en.wikipedia.org/wiki/AWK),
