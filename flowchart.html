@@ -42,6 +42,12 @@ p {
   font-weight: 400;
   font-size: 16px;
 }
+#desc {
+  margin-bottom:0px;
+}
+#rema {
+  margin-top:6px;
+}
 canvas {
   margin-bottom: 40px;
 }
@@ -62,11 +68,13 @@ button {
 <button onclick="prev_step()">Previous step</button>
 <button onclick="next_step()"><b>Next step</b></button>
 <p id="desc"></p>
+<p id="rema"></p>
 
 <script>
   "use strict"
   var canv = document.getElementById("canv")
   var desc = document.getElementById("desc")
+  var rema = document.getElementById("rema")
   var ctx = canv.getContext("2d")
   var step = 0
   var flash_timer = 0
@@ -78,6 +86,11 @@ button {
       t = t.replace( '<backupDir>', '&lt;backupDir&gt;' )
       t = t.replace( '<metaDir>', '&lt;metaDir&gt;' )
       desc.innerHTML = "<b>Step " + step + ": </b>" + t
+    }
+  }
+  function remark( t ) {
+    if ( 0 != display_state ) {
+      rema.innerHTML = "<small>" + t + "</small>"
     }
   }
   // ----------------------
@@ -201,34 +214,40 @@ button {
   var display = [
     function() {
       descr( "Create parameters file <code>000_parameters.csv</code> that contains the parameters under which Zaloha2 was invoked and internal variables." )
+      remark( "" )
       arrow( 45, 0, 45, 15 )
       file( 45, 15, "000.csv" )
     },
     function() {
-      descr( "Create AWK preprocessor <code>100_awkpreproc.awk</code> for other AWK programs (allows use of constants like <code>NUMBERREGEX</code> to make the AWK heredocs easier to read)." )
+      descr( "Create AWK preprocessor <code>100_awkpreproc.awk</code> for other AWK programs." )
+      remark( "This allows the use of constants like <code>NUMBERREGEX</code> to make the AWK heredocs easier to read." )
       arrow( 45, 55, 45, 70 )
       file( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create AWK filter <code>102_xtrace2term.awk</code> for filtering of BASH execution traces for terminal output, with optional color handling." )
+      remark( "" )
       arrow( 140, 55, 140, 70 )
       file( 140, 70, "102.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create AWK filter <code>104_actions2term.awk</code> for filtering of action lists for terminal output, with optional color handling." )
+      remark( "" )
       arrow( 235, 55, 235, 70 )
       file( 235, 70, "104.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create AWK parser <code>106_parser.awk</code> for parsing of FIND operands and preparation of shellscripts for FIND." )
+      remark( "" )
       arrow( 330, 55, 330, 70 )
       file( 330, 70, "106.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create shellscript <code>200_find_lastrun.sh</code> for FIND on <code><metaDir>/999_mark_executed</code>, to obtain time of the last run of Zaloha2." )
+      remark( "" )
       line( 320, 100, 320, 115 )
       line( 320, 115, 45, 115 )
       arrow( 45, 115, 45, 150 )
@@ -237,6 +256,7 @@ button {
     },
     function() {
       descr( "Create shellscript <code>210_find_source.sh</code> for FIND scan of <code><sourceDir></code>." )
+      remark( "" )
       line( 330, 100, 330, 125 )
       line( 330, 125, 140, 125 )
       arrow( 140, 125, 140, 150 )
@@ -245,6 +265,7 @@ button {
     },
     function() {
       descr( "Create shellscript <code>220_find_backup.sh</code> for FIND scan of <code><backupDir></code>." )
+      remark( "" )
       line( 340, 100, 340, 135 )
       line( 340, 135, 235, 135 )
       arrow( 235, 135, 235, 150 )
@@ -253,6 +274,7 @@ button {
     },
     function() {
       descr( "Execute FIND on <code><metaDir>/999_mark_executed</code>, to obtain time of the last run of Zaloha2." )
+      remark( "This step can be optionally switched off via the <code>--noLastRun</code> option (this makes Zaloha2 stateless then)." )
       arrow( 45, 180, 45, 205 )
       file( 45, 205, "300.csv" )
       file_red( 45, 150, "200.sh" )
@@ -260,6 +282,7 @@ button {
     },
     function() {
       descr( "Execute FIND scan of <code><sourceDir></code>." )
+      remark( "" )
       arrow( 140, 180, 140, 205 )
       file( 140, 205, "310.csv" )
       file_red( 140, 150, "210.sh" )
@@ -267,6 +290,7 @@ button {
     },
     function() {
       descr( "Execute FIND scan of <code><backupDir></code>." )
+      remark( "" )
       arrow( 235, 180, 235, 205 )
       file( 235, 205, "320.csv" )
       file_red( 235, 150, "220.sh" )
@@ -274,68 +298,80 @@ button {
     },
     function() {
       descr( "Create AWK cleaner <code>110_cleaner.awk</code> for escaping of tabs and newlines in paths by <code>///t</code> and <code>///n</code>." )
+      remark( "" )
       arrow( 425, 55, 425, 70 )
       file( 425, 70, "110.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Clean <code>310_source_raw.csv</code> to <code>330_source_clean.csv</code> by AWK cleaner <code>110_cleaner.awk</code>." )
+      remark( "" )
       arrow( 140, 235, 140, 260 )
       file( 140, 260, "330.csv" )
       file_green( 425, 70, "110.awk" )
     },
     function() {
       descr( "Clean <code>320_backup_raw.csv</code> to <code>340_backup_clean.csv</code> by AWK cleaner <code>110_cleaner.awk</code>." )
+      remark( "" )
       arrow( 235, 235, 235, 260 )
       file( 235, 260, "340.csv" )
       file_green( 425, 70, "110.awk" )
     },
     function() {
       descr( "Create AWK checker <code>130_checker.awk</code> for sanity-checking of cleaned FIND data." )
+      remark( "" )
       arrow( 520, 55, 520, 70 )
       file( 520, 70, "130.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Sanity-check <code>300_lastrun.csv</code> by AWK checker <code>130_checker.awk</code>." )
+      remark( "This step can be optionally switched off via the <code>--noLastRun</code> option." )
       file_blue( 45, 205, "300.csv" )
       file_green( 520, 70, "130.awk" )
     },
     function() {
       descr( "Sanity-check <code>330_source_clean.csv</code> by AWK checker <code>130_checker.awk</code>." )
+      remark( "" )
       file_blue( 140, 260, "330.csv" )
       file_green( 520, 70, "130.awk" )
     },
     function() {
       descr( "Sanity-check <code>340_backup_clean.csv</code> by AWK checker <code>130_checker.awk</code>." )
+      remark( "" )
       file_blue( 235, 260, "340.csv" )
       file_green( 520, 70, "130.awk" )
     },
     function() {
       descr( "Create AWK program for hardlink detection <code>150_hlinks.awk</code>." )
+      remark( "" )
       arrow( 615, 55, 615, 70 )
       file( 615, 70, "150.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
-      descr( "Sort <code>330_source_clean.csv</code> by device numbers + inode numbers so that multiply-linked (hardlinked) files are in adjacent records (optional step)." )
+      descr( "Sort <code>330_source_clean.csv</code> by device numbers + inode numbers so that multiply-linked (hardlinked) files are in adjacent records." )
+      remark( "This is an optional step, activated via the <code>--detectHLinksS</code> option." )
       arrow( 140, 290, 140, 315 )
       file( 140, 315, "350.csv" )
     },
     function() {
-      descr( "Perform hardlink detection by <code>150_hlinks.awk</code> (optional step)." )
+      descr( "Perform hardlink detection by <code>150_hlinks.awk</code>." )
+      remark( "This is an optional step, activated via the <code>--detectHLinksS</code> option." )
       arrow( 140, 345, 140, 370 )
       file( 140, 370, "360.csv" )
       file_green( 615, 70, "150.awk" )
     },
     function() {
       descr( "Create AWK program for differences processing <code>170_diff.awk</code>." )
+      remark( "" )
       arrow( 710, 55, 710, 70 )
       file( 710, 70, "170.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Union <code>360_source_hlinks.csv</code> with <code>340_backup_clean.csv</code> and sort by file's paths, so that objects existing in both directories are in adjacent records." )
+      remark( "" )
       line( 140, 400, 140, 415 )
       line( 140, 415, 177, 415 )
       arrow( 177, 415, 177, 430 )
@@ -346,6 +382,7 @@ button {
     },
     function() {
       descr( "Perform differences processing by <code>170_diff.awk</code>." )
+      remark( "" )
       line( 45, 235, 45, 475 )
       line( 45, 475, 109, 475 )
       arrow( 109, 475, 109, 490 )
@@ -357,12 +394,14 @@ button {
     },
     function() {
       descr( "Create AWK program for differences post-processing and splitting off Exec1 and Exec4 actions <code>190_postproc.awk</code>." )
+      remark( "" )
       arrow( 805, 55, 805, 70 )
       file( 805, 70, "190.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Reverse sort the differences result by file's paths (so that parent directories come after their children)." )
+      remark( "" )
       line( 114, 520, 114, 535 )
       line( 114, 535, 270, 535 )
       line( 270, 535, 270, 307 )
@@ -374,6 +413,7 @@ button {
     },
     function() {
       descr( "Post-process the differences result and split off Exec1 and Exec4 actions." )
+      remark( "" )
       line( 420, 215, 420, 230 )
       line( 420, 230, 330, 230 )
       arrow( 330, 230, 330, 300 )
@@ -390,12 +430,14 @@ button {
     },
     function() {
       descr( "Create AWK program for selection of Exec2 and Exec3 actions <code>405_select23.awk</code>." )
+      remark( "" )
       arrow( 425, 110, 425, 125 )
       file( 425, 125, "405.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Sort <code>500_target_r.csv</code> by file's paths and split off Exec2 and Exec3 actions." )
+      remark( "" )
       line( 510, 215, 510, 257 )
       line( 510, 257, 425, 257 )
       arrow( 425, 257, 425, 300 )
@@ -407,7 +449,8 @@ button {
       file_green( 425, 125, "405.awk" )
     },
     function() {
-      descr( "Compare byte by byte files that appear identical (optional step)." )
+      descr( "Compare byte by byte files that appear identical." )
+      remark( "This is an optional step, activated via the <code>--byteByByte</code> option." )
       arrow( 615, 215, 615, 240 )
       file( 615, 240, "555.csv" )
       line( 650, 205, 710, 205 )
@@ -416,72 +459,84 @@ button {
     },
     function() {
       descr( "Create AWK program <code>410_exec1.awk</code> for creation of shellscripts for Exec1 and Exec4." )
+      remark( "" )
       arrow( 520, 110, 520, 125 )
       file( 520, 125, "410.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create shellscript <code>610_exec1.sh</code> for Exec1." )
+      remark( "" )
       arrow( 330, 330, 330, 355 )
       file( 330, 355, "610.sh" )
       file_green( 520, 125, "410.awk" )
     },
     function() {
       descr( "Create AWK program <code>420_exec2.awk</code> for creation of shellscripts for Exec2 and Exec5." )
+      remark( "" )
       arrow( 615, 110, 615, 125 )
       file( 615, 125, "420.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create shellscripts <code>621_exec2_pre_copy.sh</code>, <code>622_exec2_copy.sh</code> and <code>623_exec2_post_copy.sh</code> for Exec2." )
+      remark( "" )
       arrow( 425, 330, 425, 355 )
       file( 425, 355, "62x.sh" )
       file_green( 615, 125, "420.awk" )
     },
     function() {
       descr( "Create AWK program <code>430_exec3.awk</code> for creation of shellscript for Exec3." )
+      remark( "" )
       arrow( 710, 110, 710, 125 )
       file( 710, 125, "430.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create shellscripts <code>631_exec3_pre_copy.sh</code>, <code>632_exec3_copy.sh</code> and <code>633_exec3_post_copy.sh</code> for Exec3." )
+      remark( "This is an optional step, activated via options <code>--revNew</code> and/or <code>--revUp</code>." )
       arrow( 520, 330, 520, 355 )
       file( 520, 355, "63x.sh" )
       file_green( 710, 125, "430.awk" )
     },
     function() {
       descr( "Create shellscript <code>640_exec4.sh</code> for Exec4." )
+      remark( "This step can be optionally switched off via the <code>--noRemove</code> option." )
       arrow( 615, 330, 615, 355 )
       file( 615, 355, "640.sh" )
       file_green( 520, 125, "410.awk" )
     },
     function() {
-      descr( "Create shellscripts <code>651_exec5_pre_copy.sh</code>, <code>652_exec5_copy.sh</code> and <code>653_exec5_post_copy.sh</code> for Exec5 (optional step)." )
+      descr( "Create shellscripts <code>651_exec5_pre_copy.sh</code>, <code>652_exec5_copy.sh</code> and <code>653_exec5_post_copy.sh</code> for Exec5." )
+      remark( "This is an optional step, activated via options <code>--byteByByte</code> or <code>--sha256</code>." )
       arrow( 710, 330, 710, 355 )
       file( 710, 355, "65x.sh" )
       file_green( 615, 125, "420.awk" )
     },
     function() {
       descr( "Create AWK program <code>490_touch.awk</code> for creation of shellscript to touch file <code>999_mark_executed</code>." )
+      remark( "" )
       arrow( 805, 110, 805, 125 )
       file( 805, 125, "490.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create shellscript <code>690_touch.sh</code> to touch file <code>999_mark_executed</code>." )
+      remark( "" )
       arrow( 805, 340, 805, 355 )
       file( 805, 355, "690.sh" )
       file_green( 805, 125, "490.awk" )
     },
     function() {
       descr( "Create AWK program <code>700_restore.awk</code> for creation of shellscripts for the case of restore." )
+      remark( "" )
       arrow( 330, 415, 330, 430 )
       file( 330, 430, "700.awk" )
       file_green( 45, 70, "100.awk" )
     },
     function() {
       descr( "Create shellscripts for the case of restore by AWK program <code>700_restore.awk</code>." )
+      remark( "This step can be optionally switched off via the <code>--noRestore</code> option." )
       arrow( 330, 475, 330, 490 )
       file( 330, 490, "800.sh" )
       arrow( 425, 475, 425, 460 )
@@ -503,56 +558,67 @@ button {
     },
     function() {
       descr( "Present Exec1 actions to the user and ask for confirmation." )
+      remark( "" )
       file_blue( 330, 300, "510.csv" )
       file_green( 235, 70, "104.awk" )
     },
     function() {
       descr( "If the user confirms, execute the Exec1 actions." )
+      remark( "" )
       file_red( 330, 355, "610.sh" )
       file_green( 140, 70, "102.awk" )
     },
     function() {
       descr( "Present Exec2 actions to the user and ask for confirmation." )
+      remark( "" )
       file_blue( 425, 300, "520.csv" )
       file_green( 235, 70, "104.awk" )
     },
     function() {
       descr( "If the user confirms, execute the Exec2 actions." )
+      remark( "" )
       file_red( 425, 355, "62x.sh" )
       file_green( 140, 70, "102.awk" )
     },
     function() {
-      descr( "Present Exec3 actions to the user and ask for confirmation (optional step)." )
+      descr( "Present Exec3 actions to the user and ask for confirmation." )
+      remark( "This is an optional step, activated via options <code>--revNew</code> and/or <code>--revUp</code>." )
       file_blue( 520, 300, "530.csv" )
       file_green( 235, 70, "104.awk" )
     },
     function() {
-      descr( "If the user confirms, execute the Exec3 actions (optional step)." )
+      descr( "If the user confirms, execute the Exec3 actions." )
+      remark( "This is an optional step, activated via options <code>--revNew</code> and/or <code>--revUp</code>." )
       file_red( 520, 355, "63x.sh" )
       file_green( 140, 70, "102.awk" )
     },
     function() {
       descr( "Present Exec4 actions to the user and ask for confirmation." )
+      remark( "This step can be optionally switched off via the <code>--noRemove</code> option." )
       file_blue( 615, 300, "540.csv" )
       file_green( 235, 70, "104.awk" )
     },
     function() {
       descr( "If the user confirms, execute the Exec4 actions." )
+      remark( "This step can be optionally switched off via the <code>--noRemove</code> option." )
       file_red( 615, 355, "640.sh" )
       file_green( 140, 70, "102.awk" )
     },
     function() {
-      descr( "Present Exec5 actions to the user and ask for confirmation (optional step)." )
+      descr( "Present Exec5 actions to the user and ask for confirmation." )
+      remark( "This is an optional step, activated via options <code>--byteByByte</code> or <code>--sha256</code>." )
       file_blue( 710, 300, "550.csv" )
       file_green( 235, 70, "104.awk" )
     },
     function() {
-      descr( "If the user confirms, execute the Exec5 actions (optional step)." )
+      descr( "If the user confirms, execute the Exec5 actions." )
+      remark( "This is an optional step, activated via options <code>--byteByByte</code> or <code>--sha256</code>." )
       file_red( 710, 355, "65x.sh" )
       file_green( 140, 70, "102.awk" )
     },
     function() {
       descr( "Touch the file <code>999_mark_executed</code>." )
+      remark( "" )
       arrow( 805, 385, 805, 430 )
       file( 805, 430, "999" )
       file_red( 805, 355, "690.sh" )
@@ -586,6 +652,7 @@ button {
       display[ step - 1 ]()
     }
     desc.innerHTML = "Press the Next step button to begin."
+    rema.innerHTML = ""
     step = 0
   }
   function prev_step() {
@@ -601,6 +668,7 @@ button {
       start_flash()
     } else {
       desc.innerHTML = "Press the Next step button to begin."
+      rema.innerHTML = ""
       step = 0
     }
   }
@@ -617,6 +685,7 @@ button {
       start_flash()
     } else {
       desc.innerHTML = "Finished !"
+      rema.innerHTML = ""
       step = display.length + 1
     }
   }
