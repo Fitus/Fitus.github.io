@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Data model of CSV metadata files of Zaloha2.sh</title>
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: #24292e;
+  background-color: #fdfdfd;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-feature-settings: "kern" 1;
+  -moz-font-feature-settings: "kern" 1;
+  -o-font-feature-settings: "kern" 1;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+a:visited {
+  color: #0366d6;
+}
+a:hover {
+  color: #0366d6;
+  text-decoration: underline;
+}
+code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  word-wrap: break-word;
+  padding: .2em .4em;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+}
+p {
+  line-height: 24px;
+  font-weight: 400;
+  font-size: 16px;
+}
+ul {
+  margin-top: 0;
+}
+li {
+  color: #24292e;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+li + li {
+  margin-top: 0.25em;
+}
+table {
+  border-spacing: 2px;
+  display: block;
+  font-size: 14px;
+  overflow: auto;
+  width: 100%;
+  margin-bottom: 16px;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+th {
+  font-weight: 600;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+td:nth-child(1) {
+  text-align: center;
+}
+td:nth-child(2) {
+  text-align: center;
+}
+td:nth-child(3) {
+  text-align: center;
+}
+td:nth-child(4) {
+  text-align: center;
+}
+td.pk {
+  background-color: #ffa07a;
+}
+td.fk {
+  background-color: #87ceeb;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Data model of CSV metadata files of Zaloha2.sh</h1>
+
+<ul>
+  <li>Field separator is tab (ASCII 9), record separator is newline (ASCII 10)</li>
+  <li>Files 310 and 320 have their fields and records broken by eventual tabs and newlines in filenames</li>
+  <li>Files 310 and 320 may also contain auxiliary records SHA-256 and SLINK-TARGET</li>
+  <li>Following table describes the CSV metadata files from file 330 up:</li>
+</ul>
+
+<table>
+  <tr>
+    <th>In FIND</th>
+    <th>In AWK</th>
+    <th>In BASH</th>
+    <th>Key</th>
+    <th>Sample data (in file 505)</th>
+    <th>Description of column</th>
+  </tr>
+  <tr>
+    <td>///</td>
+    <td>$1</td>
+    <td>tmpRec[0]</td>
+    <td></td>
+    <td><code>///</code></td>
+    <td>constant <code>///</code>, leading field</td>
+  </tr>
+  <tr>
+    <td>S,B,L</td>
+    <td>$2</td>
+    <td>tmpRec[1]</td>
+    <td class="pk">PK<sup>1</sup></td>
+    <td><code>UPDATE</code></td>
+    <td>S = &lt;sourceDir&gt;, B = &lt;backupDir&gt;, L = last run record
+      <br><small>in CSV files from 380 up: contains the action code (NEW, UPDATE, REMOVE, MKDIR, RMDIR etc)</small>
+      <br><small><sup>1</sup>) part of primary key in CSV files 370 through 505</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%y</td>
+    <td>$3</td>
+    <td>tmpRec[2]</td>
+    <td></td>
+    <td><code>f</code></td>
+    <td>file's type (d = directory, f = file, h = hardlink<sup>2</sup>, l = symbolic link, p/s/c/b/D = other)
+      <br><small><sup>2</sup>) the value "h" can occur in CSV files from 360 up if option <code>--detectHLinksS</code> was given</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%s</td>
+    <td>$4</td>
+    <td>tmpRec[3]</td>
+    <td></td>
+    <td><code>17638</code></td>
+    <td>file's size in bytes</td>
+  </tr>
+  <tr>
+    <td>%Ts</td>
+    <td>$5</td>
+    <td>tmpRec[4]</td>
+    <td></td>
+    <td><code>1610015339</code></td>
+    <td>file's last modification time, seconds since 01/01/1970</td>
+  </tr>
+  <tr>
+    <td>%F</td>
+    <td>$6</td>
+    <td>tmpRec[5]</td>
+    <td></td>
+    <td><code>ext4</code></td>
+    <td>type of the filesystem the file is on</td>
+  </tr>
+  <tr>
+    <td>%D</td>
+    <td>$7</td>
+    <td>tmpRec[6]</td>
+    <td></td>
+    <td><code>2068</code></td>
+    <td>device number the file is on</td>
+  </tr>
+  <tr>
+    <td>%i</td>
+    <td>$8</td>
+    <td>tmpRec[7]</td>
+    <td></td>
+    <td><code>7994402</code></td>
+    <td>file's inode number</td>
+  </tr>
+  <tr>
+    <td>%n</td>
+    <td>$9</td>
+    <td>tmpRec[8]</td>
+    <td></td>
+    <td><code>1;1</code></td>
+    <td>number of hardlinks to file
+      <br><small>in CSV files from 380 up: contains number of hardlinks &lt;sourceDir&gt;
+                 + <code>;</code> + number of hardlinks &lt;backupDir&gt;</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%u</td>
+    <td>$10</td>
+    <td>tmpRec[9]</td>
+    <td class="fk">FK1</td>
+    <td><code>fitus</code></td>
+    <td>file's user name
+      <br><small>foreign key to list of users on the system</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%g</td>
+    <td>$11</td>
+    <td>tmpRec[10]</td>
+    <td class="fk">FK2</td>
+    <td><code>fitusgroup</code></td>
+    <td>file's group name
+      <br><small>foreign key to list of user groups on the system</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%m</td>
+    <td>$12</td>
+    <td>tmpRec[11]</td>
+    <td></td>
+    <td><code>660</code></td>
+    <td>file's permission bits (in octal)</td>
+  </tr>
+  <tr>
+    <td><sup>3</sup>)</td>
+    <td>$13</td>
+    <td>tmpRec[12]</td>
+    <td></td>
+    <td><code>43cdc890b...e4251ae98</code></td>
+    <td>SHA-256 hash of file's contents (if <code>--sha256</code> option was given, <code>0</code> otherwise)
+      <br><small><sup>3</sup>) the SHA-256 hashes are calculated by SHA256SUM invoked by FIND on each file</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%P</td>
+    <td>$14</td>
+    <td>tmpRec[13]</td>
+    <td class="pk">PK</td>
+    <td><code>mypictures/picture.png</code></td>
+    <td>file's path with &lt;sourceDir&gt; or &lt;backupDir&gt; stripped
+      <br><small>in the records for &lt;sourceDir&gt; or &lt;backupDir&gt; themselves: an empty string</small>
+      <br><small>in CSV files up to 500, slash (/) is appended and then all slashes are escaped by <code>///s</code></small>
+      <br><small>tabs in filenames are always escaped by <code>///t</code></small>
+      <br><small>newlines in filenames are always escaped by <code>///n</code></small>
+      </td>
+  </tr>
+  <tr>
+    <td>///</td>
+    <td>$15</td>
+    <td>tmpRec[14]</td>
+    <td></td>
+    <td><code>///</code></td>
+    <td>constant <code>///</code>, terminator field
+      <br><small>this terminator field is essential for the escaping algorithm for the file's paths in AWKCLEANER</small>
+      </td>
+  </tr>
+  <tr>
+    <td>%l<sup>4</sup></td>
+    <td>$16</td>
+    <td>tmpRec[15]</td>
+    <td></td>
+    <td></td>
+    <td>target path of symbolic link (if <code>$3 == "l"</code>)
+      <br><small><sup>4</sup>) for symlinks with target paths with three or more consecutive slashes,
+                 script <code>205_read_slink.sh</code> is used instead</small>
+      <br><small>slashes are always escaped by <code>///s</code></small>
+      <br><small>tabs are always escaped by <code>///t</code></small>
+      <br><small>newlines are always escaped by <code>///n</code></small>
+      <br><br>target path of hardlink with &lt;sourceDir&gt; stripped (if <code>$3 == "h"</code>)
+      <br><small>in CSV files from 360 up, target paths of hardlinks are also stored in this column</small>
+      <br><small>tabs are always escaped by <code>///t</code></small>
+      <br><small>newlines are always escaped by <code>///n</code></small>
+      </td>
+  </tr>
+  <tr>
+    <td>///</td>
+    <td>$17</td>
+    <td>tmpRec[16]</td>
+    <td></td>
+    <td><code>///</code></td>
+    <td>constant <code>///</code>, terminator field
+      <br><small>this terminator field is essential for the escaping algorithm for target paths of symbolic links in AWKCLEANER</small>
+      </td>
+  </tr>
+</table>
+
+</body>
+</html>
