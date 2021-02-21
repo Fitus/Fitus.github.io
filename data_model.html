@@ -107,9 +107,9 @@ td.fk {
 
 <ul>
   <li>Field separator is tab (ASCII 9), record separator is newline (ASCII 10)</li>
-  <li>Files 310 and 320 have their fields and records broken by eventual tabs and newlines in filenames</li>
+  <li>Files 310 and 320 may have their fields and records broken by eventual tabs and newlines in filenames</li>
   <li>Files 310 and 320 may also contain auxiliary records SHA-256 and SLINK-TARGET</li>
-  <li>Following table describes the CSV metadata files from file 330 up:</li>
+  <li>Following table describes the CSV metadata files from file 330 up (= after AWKCLEANER):</li>
 </ul>
 
 <table>
@@ -137,7 +137,7 @@ td.fk {
     <td><code>UPDATE</code></td>
     <td>S = &lt;sourceDir&gt;, B = &lt;backupDir&gt;, L = last run record
       <br><small>in CSV files from 380 up: contains the action code (NEW, UPDATE, REMOVE, MKDIR, RMDIR etc)</small>
-      <br><small><sup>1</sup>) part of primary key in CSV files 370 through 505</small>
+      <br><small><sup>1</sup>) part of primary key only in CSV files 370 through 505</small>
       </td>
   </tr>
   <tr>
