@@ -106,10 +106,11 @@ td.fk {
 <h1>Data model of CSV metadata files of Zaloha2.sh</h1>
 
 <ul>
-  <li>Field separator is tab (ASCII 9), record separator is newline (ASCII 10)</li>
-  <li>Files 310 and 320 may have their fields and records broken by eventual tabs and newlines in filenames</li>
-  <li>Files 310 and 320 may also contain auxiliary records SHA-256 and SLINK-TARGET</li>
-  <li>Following table describes the CSV metadata files from file 330 up (= after AWKCLEANER):</li>
+  <li>Field separator is tab (ASCII 9), record separator is newline (ASCII 10).</li>
+  <li>Files 310 and 320 may have their fields and records broken by eventual tabs and newlines in filenames.</li>
+  <li>Files 310 and 320 may also contain auxiliary records SHA-256 and SLINK-TARGET.</li>
+  <li>Following table describes the CSV metadata files from file 330 up (= after AWKCLEANER).</li>
+  <li>The CSV metadata files can be easily viewed e.g. in LibreOffice Calc or in MS Excel.</li>
 </ul>
 
 <table>
@@ -235,7 +236,7 @@ td.fk {
     <td>tmpRec[12]</td>
     <td></td>
     <td><code>43cdc890b...e4251ae98</code></td>
-    <td>SHA-256 hash of file's contents (if <code>--sha256</code> option was given, <code>0</code> otherwise)
+    <td>SHA-256 hash of file's contents (if <code>$3 == "f"</code> and option <code>--sha256</code> was given, <code>0</code> otherwise)
       <br><small><sup>3</sup>) the SHA-256 hashes are calculated by SHA256SUM invoked by FIND on each file</small>
       </td>
   </tr>
