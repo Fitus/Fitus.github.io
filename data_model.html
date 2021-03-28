@@ -107,10 +107,10 @@ td.fk {
 
 <ul>
   <li>Field separator is tab (ASCII 9), record separator is newline (ASCII 10).</li>
-  <li>Files 310 and 320 may have their fields and records broken by eventual tabs and newlines in filenames.</li>
-  <li>Files 310 and 320 may also contain auxiliary records SHA-256 and SLINK-TARGET.</li>
+  <li>The CSV metadata files can be easily viewed in many applications (e.g. in LibreOffice Calc, MS Excel).</li>
   <li>Following table describes the CSV metadata files from file 330 up (= after AWKCLEANER).</li>
-  <li>The CSV metadata files can be easily viewed e.g. in LibreOffice Calc or in MS Excel.</li>
+  <li><i>Caution 1: Files 310 and 320 may have their fields and records broken by eventual tabs and newlines in filenames.</i></li>
+  <li><i>Caution 2: Files 310 and 320 may also contain auxiliary records SLINK-TARGET and SHA-256.</i></li>
 </ul>
 
 <table>
@@ -137,7 +137,7 @@ td.fk {
     <td class="pk">PK<sup>1</sup></td>
     <td><code>UPDATE</code></td>
     <td>S = &lt;sourceDir&gt;, B = &lt;backupDir&gt;, L = last run record
-      <br><small>in CSV files from 380 up: contains the action code (NEW, UPDATE, REMOVE, MKDIR, RMDIR etc)</small>
+      <br><small>in CSV files from 380 up: the <b>action code</b> (NEW, UPDATE, REMOVE, MKDIR, RMDIR etc)</small>
       <br><small><sup>1</sup>) part of primary key only in CSV files 370 through 505</small>
       </td>
   </tr>
@@ -198,7 +198,7 @@ td.fk {
     <td></td>
     <td><code>1;1</code></td>
     <td>number of hardlinks to file
-      <br><small>in CSV files from 380 up: contains number of hardlinks &lt;sourceDir&gt;
+      <br><small>in CSV files from 380 up: number of hardlinks &lt;sourceDir&gt;
                  + <code>;</code> + number of hardlinks &lt;backupDir&gt;</small>
       </td>
   </tr>
@@ -209,7 +209,7 @@ td.fk {
     <td class="fk">FK1</td>
     <td><code>fitus</code></td>
     <td>file's user name
-      <br><small>foreign key to list of users on the system</small>
+      <br><small>(foreign key to list of users on the system)</small>
       </td>
   </tr>
   <tr>
@@ -219,7 +219,7 @@ td.fk {
     <td class="fk">FK2</td>
     <td><code>fitusgroup</code></td>
     <td>file's group name
-      <br><small>foreign key to list of user groups on the system</small>
+      <br><small>(foreign key to list of user groups on the system)</small>
       </td>
   </tr>
   <tr>
@@ -237,7 +237,7 @@ td.fk {
     <td></td>
     <td><code>43cdc890b...e4251ae98</code></td>
     <td>SHA-256 hash of file's contents (if <code>$3 == "f"</code> and option <code>--sha256</code> was given, <code>0</code> otherwise)
-      <br><small><sup>3</sup>) the SHA-256 hashes are calculated by SHA256SUM invoked by FIND on each file</small>
+      <br><small><sup>3</sup>) the SHA-256 hashes are calculated by <code>sha256sum</code> invoked by FIND on each file</small>
       </td>
   </tr>
   <tr>
@@ -248,7 +248,7 @@ td.fk {
     <td><code>mypictures/picture.png</code></td>
     <td>file's path with &lt;sourceDir&gt; or &lt;backupDir&gt; stripped
       <br><small>in the records for &lt;sourceDir&gt; or &lt;backupDir&gt; themselves: an empty string</small>
-      <br><small>in CSV files up to 500, slash (/) is appended and then all slashes are escaped by <code>///s</code></small>
+      <br><small>in CSV files up to 500, slash (<code>/</code>) is appended and then all slashes are escaped by <code>///s</code></small>
       <br><small>tabs in filenames are always escaped by <code>///t</code></small>
       <br><small>newlines in filenames are always escaped by <code>///n</code></small>
       </td>
@@ -275,8 +275,8 @@ td.fk {
       <br><small>slashes are always escaped by <code>///s</code></small>
       <br><small>tabs are always escaped by <code>///t</code></small>
       <br><small>newlines are always escaped by <code>///n</code></small>
-      <br><br>target path of hardlink with &lt;sourceDir&gt; stripped (if <code>$3 == "h"</code>)
-      <br><small>in CSV files from 360 up, target paths of hardlinks are also stored in this column</small>
+      <br><br>for hardlinks: path of first link (the "file") with &lt;sourceDir&gt; stripped (if <code>$3 == "h"</code>)
+      <br><small>in CSV files from 360 up, this column is used to store paths of first links of hardlinks</small>
       <br><small>tabs are always escaped by <code>///t</code></small>
       <br><small>newlines are always escaped by <code>///n</code></small>
       </td>
