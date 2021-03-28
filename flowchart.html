@@ -43,10 +43,12 @@ p {
   font-size: 16px;
 }
 #desc {
-  margin-bottom:0px;
+  margin-bottom: 0px;
 }
 #rema {
-  margin-top:6px;
+  margin-top: 6px;
+  font-size: small;
+  line-height: 1.5;
 }
 canvas {
   margin-bottom: 40px;
@@ -80,17 +82,22 @@ button {
   var flash_timer = 0
   var display_state = 0
   // ----------------------
+  function preproc( t ) {
+    t = t.replace( '<sourceDir>', '&lt;sourceDir&gt;' )
+    t = t.replace( '<backupDir>', '&lt;backupDir&gt;' )
+    t = t.replace( '<metaDir>', '&lt;metaDir&gt;' )
+    t = t.replace( '<findSourceOps>', '&lt;findSourceOps&gt;' )
+    t = t.replace( '<findGeneralOps>', '&lt;findGeneralOps&gt;' )
+    return t
+  }
   function descr( t ) {
     if ( 0 != display_state ) {
-      t = t.replace( '<sourceDir>', '&lt;sourceDir&gt;' )
-      t = t.replace( '<backupDir>', '&lt;backupDir&gt;' )
-      t = t.replace( '<metaDir>', '&lt;metaDir&gt;' )
-      desc.innerHTML = "<b>Step " + step + ": </b>" + t
+      desc.innerHTML = "<b>Step " + step + ": </b>" + preproc( t )
     }
   }
   function remark( t ) {
     if ( 0 != display_state ) {
-      rema.innerHTML = "<small>" + t + "</small>"
+      rema.innerHTML = preproc( t )
     }
   }
   // ----------------------
@@ -282,7 +289,11 @@ button {
     },
     function() {
       descr( "Execute FIND scan of <code><sourceDir></code>." )
-      remark( "" )
+      remark( "This scan can be controlled by <code><findSourceOps></code> and by <code><findGeneralOps></code>. "
+            + "Auxiliary script <code>205_read_slink.sh</code> is used to read target paths of symbolic links with three or more consecutive slashes "
+            + "(this produces auxiliary records SLINK-TARGET). "
+            + "If option <code>--sha256</code> is given, <code>sha256sum</code> is executed on regular files to obtain their SHA-256 hashes "
+            + "(this produces auxiliary records SHA-256)." )
       arrow( 140, 180, 140, 205 )
       file( 140, 205, "310.csv" )
       file_red( 140, 150, "210.sh" )
@@ -290,7 +301,11 @@ button {
     },
     function() {
       descr( "Execute FIND scan of <code><backupDir></code>." )
-      remark( "" )
+      remark( "This scan can be controlled by <code><findGeneralOps></code>. "
+            + "Auxiliary script <code>205_read_slink.sh</code> is used to read target paths of symbolic links with three or more consecutive slashes "
+            + "(this produces auxiliary records SLINK-TARGET). "
+            + "If option <code>--sha256</code> is given, <code>sha256sum</code> is executed on regular files to obtain their SHA-256 hashes "
+            + "(this produces auxiliary records SHA-256)." )
       arrow( 235, 180, 235, 205 )
       file( 235, 205, "320.csv" )
       file_red( 235, 150, "220.sh" )
@@ -298,7 +313,7 @@ button {
     },
     function() {
       descr( "Create AWK cleaner <code>110_cleaner.awk</code> for escaping of tabs and newlines in paths by <code>///t</code> and <code>///n</code>." )
-      remark( "" )
+      remark( "Besides escaping of tabs and newlines, the AWK cleaner also merges the auxiliary records SLINK-TARGET and SHA-256 into the regular metadata records." )
       arrow( 425, 55, 425, 70 )
       file( 425, 70, "110.awk" )
       file_green( 45, 70, "100.awk" )
@@ -326,7 +341,7 @@ button {
     },
     function() {
       descr( "Sanity-check <code>300_lastrun.csv</code> by AWK checker <code>130_checker.awk</code>." )
-      remark( "This step can be optionally switched off via the <code>--noLastRun</code> option." )
+      remark( "This does not occur if the <code>--noLastRun</code> option is given (as <code>300_lastrun.csv</code> is not prepared in such case)." )
       file_blue( 45, 205, "300.csv" )
       file_green( 520, 70, "130.awk" )
     },
@@ -437,7 +452,7 @@ button {
     },
     function() {
       descr( "Sort <code>500_target_r.csv</code> by file's paths and split off Exec2 and Exec3 actions." )
-      remark( "" )
+      remark( "If option <code>--sha256</code> is given, split off also the Exec5 actions prepared by the differences processing (into file 550)." )
       line( 510, 215, 510, 257 )
       line( 510, 257, 425, 257 )
       arrow( 425, 257, 425, 300 )
