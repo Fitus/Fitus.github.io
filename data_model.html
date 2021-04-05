@@ -107,7 +107,7 @@ td.fk {
 
 <ul>
   <li>Field separator is tab (ASCII 9), record separator is newline (ASCII 10).</li>
-  <li>The CSV metadata files can be easily viewed in many applications (e.g. in LibreOffice Calc, MS Excel).</li>
+  <li>The CSV metadata files can be easily viewed in many applications (e.g. in LibreOffice Calc or in MS Excel).</li>
   <li>Following table describes the CSV metadata files from file 330 up (= after AWKCLEANER).</li>
   <li><i>Caution 1: Files 310 and 320 may have their fields and records broken by eventual tabs and newlines in filenames.</i></li>
   <li><i>Caution 2: Files 310 and 320 may also contain auxiliary records SLINK-TARGET and SHA-256.</i></li>
@@ -149,6 +149,7 @@ td.fk {
     <td><code>f</code></td>
     <td>file's type (d = directory, f = file, h = hardlink<sup>2</sup>, l = symbolic link, p/s/c/b/D = other)
       <br><small><sup>2</sup>) the value "h" can occur in CSV files from 360 up if option <code>--detectHLinksS</code> was given</small>
+      <br><small><sup>2</sup>) hardlinks means here: the second, third, etc. links to the multiply linked (hardlinked) files</small>
       </td>
   </tr>
   <tr>
@@ -200,6 +201,7 @@ td.fk {
     <td>number of hardlinks to file
       <br><small>in CSV files from 380 up: number of hardlinks &lt;sourceDir&gt;
                  + <code>;</code> + number of hardlinks &lt;backupDir&gt;</small>
+      <br><small>hardlinks means here: all hardlinks (i.e. including the first one)</small>
       </td>
   </tr>
   <tr>
@@ -275,8 +277,7 @@ td.fk {
       <br><small>slashes are always escaped by <code>///s</code></small>
       <br><small>tabs are always escaped by <code>///t</code></small>
       <br><small>newlines are always escaped by <code>///n</code></small>
-      <br><br>for hardlinks: path of first link (the "file") with &lt;sourceDir&gt; stripped (if <code>$3 == "h"</code>)
-      <br><small>in CSV files from 360 up, this column is used to store paths of first links of hardlinks</small>
+      <br><br>for hardlinks<sup>2</sup> (if <code>$3 == "h"</code>): path of the first link (the "file") with &lt;sourceDir&gt; stripped
       <br><small>tabs are always escaped by <code>///t</code></small>
       <br><small>newlines are always escaped by <code>///n</code></small>
       </td>
