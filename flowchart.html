@@ -494,7 +494,7 @@ p.remark2 {
     },
     function() {
       descr( "Create shellscripts <code>631_exec3_pre_copy.sh</code>, <code>632_exec3_copy.sh</code> and <code>633_exec3_post_copy.sh</code> for Exec3." )
-      remark( "This is an optional step, activated via options <code>--revNew</code> and/or <code>--revUp</code>." )
+      remark( "This is an optional step, activated via options <code>--revNew</code> (or <code>--revNewAll</code>) and/or <code>--revUp</code>." )
       arrow( 520, 330, 520, 355 )
       file( 520, 355, "63x.sh" )
       file_green( 710, 125, "430.awk" )
@@ -581,13 +581,13 @@ p.remark2 {
     },
     function() {
       descr( "Present Exec3 actions to the user and ask for confirmation." )
-      remark( "This is an optional step, activated via options <code>--revNew</code> and/or <code>--revUp</code>." )
+      remark( "This is an optional step, activated via options <code>--revNew</code> (or <code>--revNewAll</code>) and/or <code>--revUp</code>." )
       file_blue( 520, 300, "530.csv" )
       file_green( 235, 70, "104.awk" )
     },
     function() {
       descr( "If the user confirms, execute the Exec3 actions." )
-      remark( "This is an optional step, activated via options <code>--revNew</code> and/or <code>--revUp</code>." )
+      remark( "This is an optional step, activated via options <code>--revNew</code> (or <code>--revNewAll</code>) and/or <code>--revUp</code>." )
       remark2( "In the Remote Source Mode the shellscripts 631 (pre-copy) and 633 (post-copy) execute on the remote side in an SSH session "
              + "and the shellscript 632 (copy) contains SCP commands that copy from local to remote." )
       remark2( "In the Remote Backup Mode the shellscript 632 (copy) contains SCP commands that copy from remote to local." )
